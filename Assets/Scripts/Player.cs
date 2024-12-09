@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject spawnpoint2;
 
     private float timer = 0.5f;
+    private int vidas = 5;
 
     // Start is called before the first frame update
     void Start()
@@ -54,7 +55,18 @@ public class Player : MonoBehaviour
         
     }
 
-
+    private void OnTriggerEnter2D(Collider2D elotro)
+    {
+        if (elotro.gameObject.CompareTag("ShotEnemy") || elotro.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(elotro.gameObject);
+            vidas--;
+            if(vidas <= 0)
+            {
+                Destroy(this.gameObject);
+            }
+        } 
+    }
 
 
 

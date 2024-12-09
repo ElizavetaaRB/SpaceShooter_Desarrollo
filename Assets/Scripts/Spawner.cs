@@ -36,7 +36,8 @@ public class Spawner : MonoBehaviour
                 textooleadas.text = "";
                 for (int j = 0; j < 10; j++)// generar enemigos
                 {
-                    Instantiate(enemyprefab, this.gameObject.transform.position, Quaternion.identity);
+                    Vector2 randomnumber = new Vector2(transform.position.x, Random.Range(-4.5f, 4.5f));
+                    Instantiate(enemyprefab, randomnumber, Quaternion.identity);
                     yield return new WaitForSeconds(0.5f);
                 }
                 yield return new WaitForSeconds(2f);

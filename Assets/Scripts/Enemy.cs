@@ -32,4 +32,13 @@ public class Enemy : MonoBehaviour
         }
 
     }
+
+    private void OnTriggerEnter2D(Collider2D elotro)
+    {
+        if (elotro.gameObject.CompareTag("ShotPlayer"))
+        {
+            Destroy(elotro.gameObject);
+            Destroy(this.gameObject);
+        }
+    }
 }

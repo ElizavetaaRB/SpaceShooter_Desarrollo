@@ -9,7 +9,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float velocidad;
     [SerializeField] private Shot shotPrefab;
 
-
     [SerializeField] private Transform[] spawnpoints;
     private ObjectPool<Shot> pool;
 
@@ -73,6 +72,9 @@ public class Enemy : MonoBehaviour
         if (elotro.gameObject.CompareTag("ShotPlayer"))
         {
             Destroy(elotro.gameObject);
+            Destroy(this.gameObject);
+        }else if (elotro.gameObject.CompareTag("Limit"))
+        {
             Destroy(this.gameObject);
         }
     }

@@ -5,6 +5,9 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class Player : MonoBehaviour
 {
@@ -12,15 +15,13 @@ public class Player : MonoBehaviour
     [SerializeField] private float ratioShot;
 
 
-
     [SerializeField] private Shot shotPrefab;
     [SerializeField] private Transform[] spawnpoints;
-
+    [SerializeField] private Image[] hearts;
     private ObjectPool<Shot> pool;
 
     private float timer = 0.5f;
-    private int vidas = 5;
-
+    private int lifes = 5;
 
     private void Awake()
     {
@@ -48,13 +49,13 @@ public class Player : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         //Movimiento
@@ -88,7 +89,18 @@ public class Player : MonoBehaviour
             
             timer = 0;
         }
-        
+
+
+        // power up de un campo de bolas 
+        // serializae private int numeroDisparos; // despues de pone a 250 disparos por ejemplo 
+        //  float gradosporDisparo = 360/numeroDisparos;
+        // for(float i = 0; i < 360; i+=gradosporDisparo){ sustituiria el for anterior por este 
+        // ahora el copyshot.transform.position = tranform.position;
+        // copyshot.transform.eulerAngles = new Vector3(0f,0f,i); }
+
+
+
+        // un private Ienumrator Espiral() y con el yield return new WaitForSeconds(0.1f); video 19/11 minutos 14 
     }
 
     private void OnTriggerEnter2D(Collider2D elotro)
@@ -96,14 +108,18 @@ public class Player : MonoBehaviour
         if (elotro.gameObject.CompareTag("ShotEnemy") || elotro.gameObject.CompareTag("Enemy"))
         {
             Destroy(elotro.gameObject);
-            vidas--;
-            if(vidas <= 0)
+            hearts[lifes-1].enabled = false;
+            lifes--;
+            if (lifes <= 0)
             {
                 Destroy(this.gameObject);
+                GameOver();
             }
         } 
     }
 
-
-
+    private void GameOver()
+    {
+        SceneManager.LoadScene("GameOver");
+    }
 }

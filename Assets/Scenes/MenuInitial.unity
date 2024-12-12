@@ -1495,7 +1495,7 @@ GameObject:
   - component: {fileID: 855333655}
   - component: {fileID: 855333654}
   m_Layer: 0
-  m_Name: prueba
+  m_Name: Audio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1511,7 +1511,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: eebda4213df9ef343b04132a1532a846, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 11040470c634c324ab84ae65bf333969, type: 3}
+  m_audioClip: {fileID: 8300000, guid: f5ee21cf8fb714d6492f4bd36526832c, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

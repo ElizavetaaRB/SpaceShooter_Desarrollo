@@ -237,9 +237,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocidad: 5
-  disparoprefab: {fileID: 723056742346424490, guid: 0c7d5db12f974a048ba17af55f819b8a, type: 3}
-  spawnpoint: {fileID: 2334522420958887703}
-  spawnpoint2: {fileID: 7367661594149843705}
+  shotPrefab: {fileID: 4090295474189416065, guid: 0c7d5db12f974a048ba17af55f819b8a, type: 3}
+  spawnpoints:
+  - {fileID: 2164359906710135359}
+  - {fileID: 7692154844245186450}
 --- !u!1 &7367661594149843705
 GameObject:
   m_ObjectHideFlags: 0

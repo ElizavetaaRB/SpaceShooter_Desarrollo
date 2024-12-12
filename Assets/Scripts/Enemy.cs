@@ -1,70 +1,100 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UIElements;
+
+
 
 public class Enemy : MonoBehaviour
 {
-
     [SerializeField] private float velocidad;
     [SerializeField] private Shot shotPrefab;
-
     [SerializeField] private Transform[] spawnpoints;
-    private ObjectPool<Shot> pool;
 
+    private static ObjectPool<Shot> shotPool;  // Static to ensure all instances share the same pool
+    private static bool isPoolInitialized = false;
+    private int poolsize = 50;
 
     private void Awake()
     {
-        pool = new ObjectPool<Shot>(CreateShot, null, ReleaseShot, DestroyShot);
-
+        // Inicializar el pool solo una vez, cuando sea necesario
+        if (!isPoolInitialized)
+        {
+            InitializeShotPool();
+            isPoolInitialized = true;
+        }
     }
 
-    private void DestroyShot(Shot shot)
+    private void InitializeShotPool()
     {
-        Destroy(shot.gameObject);
+        shotPool = new ObjectPool<Shot>(CreateShot, OnGetShot, ReleaseShot, DestroyShot);
+
+        // Prellenar el pool con disparos inactivos
+        for (int i = 0; i < poolsize; i++)
+        {
+            Shot shot = shotPool.Get();
+            shotPool.Release(shot);
+        }
+    }
+
+    private Shot CreateShot()
+    {
+        Shot shotcopyEnemy = Instantiate(shotPrefab);
+        shotcopyEnemy.gameObject.SetActive(false);
+        shotcopyEnemy.Mypool = shotPool;
+        return shotcopyEnemy;
+    }
+
+    private void OnGetShot(Shot shot)
+    {
+        if (shot != null)
+        {
+            shot.gameObject.SetActive(true);
+        }
     }
 
     private void ReleaseShot(Shot shot)
     {
-        shot.gameObject.SetActive(false);
+        if (shot != null)
+        {
+            shot.gameObject.SetActive(false);
+        }
     }
 
-
-    private Shot CreateShot()
+    private void DestroyShot(Shot shot)
     {
-        Shot shotcopyEnemy = Instantiate(shotPrefab, transform.position, Quaternion.identity);
-        shotcopyEnemy.Mypool = pool;
-        return shotcopyEnemy;
+        if (shot != null)
+        {
+            Destroy(shot.gameObject);
+        }
     }
 
-
-
-    // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(shotsEnemy());
     }
 
-    // Update is called once per frame
     void Update()
     {
-        this.transform.Translate(new Vector2(-1,0) * velocidad * Time.deltaTime);
-
+        this.transform.Translate(new Vector2(-1, 0) * velocidad * Time.deltaTime);
     }
 
-
-    IEnumerator shotsEnemy()
+    private IEnumerator shotsEnemy()
     {
-        while (true) {
-            Shot copyshot = pool.Get();
-            copyshot.gameObject.SetActive(true);
-            copyshot.transform.position = spawnpoints[0].transform.position;
-            copyshot = pool.Get();
-            copyshot.gameObject.SetActive(true);
-            copyshot.transform.position = spawnpoints[1].transform.position;
+        while (true)
+        {
+            for (int i = 0; i < spawnpoints.Length; i++)
+            {
+                Shot copyshot = shotPool.Get();
+                if (copyshot != null)
+                {
+                    copyshot.transform.position = spawnpoints[i].position;
+                }
+            }
             yield return new WaitForSeconds(1f);
         }
-
     }
 
     private void OnTriggerEnter2D(Collider2D elotro)
@@ -73,9 +103,19 @@ public class Enemy : MonoBehaviour
         {
             Destroy(elotro.gameObject);
             Destroy(this.gameObject);
-        }else if (elotro.gameObject.CompareTag("Limit"))
+        }
+        else if (elotro.gameObject.CompareTag("Limit"))
         {
+            Shot shot = elotro.GetComponent<Shot>();
+            if (shot != null)
+            {
+                shotPool.Release(shot);  // Liberar el disparo al pool
+            }
+
             Destroy(this.gameObject);
         }
     }
+
+
 }
+

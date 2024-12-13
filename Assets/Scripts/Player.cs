@@ -13,16 +13,16 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float ratioShot;
-
-
+    [SerializeField] private PowerUp powerUp;
+    [SerializeField] private GameObject shield;
     [SerializeField] private Shot shotPrefab;
     [SerializeField] private Transform[] spawnpoints;
     [SerializeField] private Image[] hearts;
     private ObjectPool<Shot> pool;
-
+    private int numshots = 5;
     private float timer = 0.5f;
     private int lifes = 5;
-
+    private int powerUpLevel = 0;
     private void Awake()
     {
         pool = new ObjectPool<Shot>(CreateShot, null, ReleaseShot, DestroyShot);
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        
+        DeactivateShield();
     }
 
 
@@ -80,41 +80,83 @@ public class Player : MonoBehaviour
         timer += 1 * Time.deltaTime;
         if ((Input.GetKey(KeyCode.Space)) &&  timer > ratioShot)
         {
-            for (int i = 0; i < 2; i++) //power up cambiar de 2 a 3 para que apunte con 3 cañones y definir otro spawn. el video anterior decir de las probabilidades 
+            if (powerUpLevel == 0)
             {
-                Shot copyshot = pool.Get();
-                copyshot.gameObject.SetActive(true);
-                copyshot.transform.position=spawnpoints[i].transform.position;
+                for (int i = 0; i < 2; i++) //power up cambiar de 2 a 3 para que apunte con 3 cañones y definir otro spawn. el video anterior decir de las probabilidades 
+                {
+                    Shot copyshot = pool.Get();
+                    copyshot.gameObject.SetActive(true);
+                    copyshot.transform.position = spawnpoints[i].transform.position;
+                }
+
+                timer = 0;
             }
-            
-            timer = 0;
+            else if (powerUpLevel == 1)
+            {
+                for (int i = 0; i < 3; i++) //power up cambiar de 2 a 3 para que apunte con 3 cañones y definir otro spawn. el video anterior decir de las probabilidades 
+                {
+                    Shot copyshot = pool.Get();
+                    copyshot.gameObject.SetActive(true);
+                    copyshot.transform.position = spawnpoints[i].transform.position;
+                }
+
+                timer = 0;
+            }
+            else if(powerUpLevel == 2)
+            {
+                StartCoroutine(MaxPower());
+            }
+
         }
-
-
-        // power up de un campo de bolas 
-        // serializae private int numeroDisparos; // despues de pone a 250 disparos por ejemplo 
-        //  float gradosporDisparo = 360/numeroDisparos;
-        // for(float i = 0; i < 360; i+=gradosporDisparo){ sustituiria el for anterior por este 
-        // ahora el copyshot.transform.position = tranform.position;
-        // copyshot.transform.eulerAngles = new Vector3(0f,0f,i); }
-
-
-
-        // un private Ienumrator Espiral() y con el yield return new WaitForSeconds(0.1f); video 19/11 minutos 14 
     }
+
+    private IEnumerator MaxPower()
+    {
+        float gradepershot = 360 / numshots;
+        for(float i =0;i < 360; i += gradepershot)
+        {
+            Shot shotcopypower = pool.Get();
+            shotcopypower.gameObject.SetActive(true);
+            shotcopypower.transform.position = transform.position;
+            shotcopypower.transform.eulerAngles = new Vector3(0f, 0f, i);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+
 
     private void OnTriggerEnter2D(Collider2D elotro)
     {
         if (elotro.gameObject.CompareTag("ShotEnemy") || elotro.gameObject.CompareTag("Enemy"))
         {
             Destroy(elotro.gameObject);
-            hearts[lifes-1].enabled = false;
-            lifes--;
+            if(lifes >= 1)
+            {
+                hearts[lifes - 1].enabled = false;
+            }
+            if (HasShield())
+            {
+                DeactivateShield();
+            }
+            else
+            {
+                lifes--;
+                ActivateShield();
+            }
+
             if (lifes <= 0)
             {
                 Destroy(this.gameObject);
                 GameOver();
             }
+        }else if (elotro.gameObject.CompareTag("PowerUp"))
+        {
+            if (powerUp.activateShield)
+            {
+                ActivateShield();
+                powerUpLevel = UnityEngine.Random.Range(0,3);
+            }
+
         } 
     }
 
@@ -122,4 +164,19 @@ public class Player : MonoBehaviour
     {
         SceneManager.LoadScene("GameOver");
     }
+
+    private void ActivateShield()
+    {
+        shield.SetActive(true);
+    }
+    private void DeactivateShield()
+    {
+        shield.SetActive(false);
+    }
+
+    private bool HasShield()
+    {
+        return shield.activeSelf;
+    }
+
 }

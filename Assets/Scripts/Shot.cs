@@ -5,8 +5,8 @@ using UnityEngine.Pool;
 
 public class Shot : MonoBehaviour
 {
-    [SerializeField] private float velocidad;
-    [SerializeField] private Vector2 direccion;
+    [SerializeField] private float speed;
+    [SerializeField] private Vector2 direction;
 
     private ObjectPool<Shot> mypool; //intern
     private float timer;
@@ -23,7 +23,7 @@ public class Shot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(direccion*velocidad*Time.deltaTime);
+        transform.Translate(direction*speed*Time.deltaTime);
 
         // pool 
         timer += Time.deltaTime;

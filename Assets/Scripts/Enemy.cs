@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 public class Enemy : MonoBehaviour
 {
 
-    [SerializeField] private float velocidad;
+    [SerializeField] private float speed;
     [SerializeField] private Shot shotPrefab;
 
     [SerializeField] private Transform[] spawnpoints;
@@ -48,7 +48,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.transform.Translate(new Vector2(-1,0) * velocidad * Time.deltaTime);
+        this.transform.Translate(new Vector2(-1,0) * speed * Time.deltaTime);
 
     }
 

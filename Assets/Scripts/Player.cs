@@ -42,9 +42,17 @@ public class Player : MonoBehaviour
 
     private Shot CreateShot()
     {
-       Shot shotcopy = Instantiate(shotPrefab,transform.position, Quaternion.identity);
-       shotcopy.Mypool = pool;
-        return shotcopy;
+       Shot shotcopy1 = Instantiate(shotPrefab,transform.position, Quaternion.identity);
+       shotcopy1.Mypool = pool;
+        return shotcopy1;
+    }
+
+
+
+
+    void Start()
+    {
+        
     }
 
 
@@ -100,10 +108,7 @@ public class Player : MonoBehaviour
         if (elotro.gameObject.CompareTag("ShotEnemy") || elotro.gameObject.CompareTag("Enemy"))
         {
             Destroy(elotro.gameObject);
-            if(lifes >= 1)
-            {
-                hearts[lifes - 1].enabled = false;
-            }
+            hearts[lifes-1].enabled = false;
             lifes--;
             if (lifes <= 0)
             {
